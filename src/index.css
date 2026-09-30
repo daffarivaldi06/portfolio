@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* The cream editorial palette is the first-paint theme. */
+:root {
+  color-scheme: light;
+  --color-bg: #f6f5f2;
+  --color-surface: #ffffff;
+  --color-ink: #17181a;
+  --color-muted: #55565b;
+  --color-accent: #8f5a22;
+  --color-line: #e2e0db;
+  --hero-glow: rgba(143, 90, 34, 0.1);
+}
+
+.dark {
+  color-scheme: dark;
+  --color-bg: #0a0b0d; /* near-black, deliberately not #000 */
+  --color-surface: #101215;
+  --color-ink: #edece9;
+  --color-muted: #a3a4a8;
+  --color-accent: #d4a15c; /* one restrained accent: warm gold */
+  --color-line: #1f2126;
+  --hero-glow: rgba(212, 161, 92, 0.09);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-bg font-sans text-ink antialiased;
+  font-feature-settings: "cv05", "ss01";
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-bg);
+}
+
+/* Visible, high-contrast keyboard focus for every interactive element */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Static warmth behind the hero; the SVG supplies the only continuous motion. */
+.hero-glow {
+  background:
+    radial-gradient(60% 50% at 30% 20%, var(--hero-glow), transparent 70%),
+    radial-gradient(50% 40% at 80% 60%, var(--hero-glow), transparent 70%);
+}
+
+.living-system-lines {
+  position: absolute;
+  top: 11%;
+  right: 0;
+  width: min(62%, 760px);
+  height: 72%;
+  pointer-events: none;
+  opacity: 0.72;
+  mask-image: linear-gradient(to right, transparent, black 35%);
+}
+
+@media (max-width: 767px) {
+  .living-system-lines {
+    top: 10%;
+    right: -18%;
+    width: 85%;
+    height: 260px;
+    opacity: 0.3;
+    mask-image: linear-gradient(to right, transparent, black 65%);
+  }
+
+  .living-system-detail {
+    display: none;
+  }
+}
+
+/* Respect prefers-reduced-motion globally */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
