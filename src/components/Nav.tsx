@@ -1,9 +1,21 @@
 import { useEffect, useState } from "react";
+import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "motion/react";
 import { content } from "../data/content";
 import { Github, Linkedin, Mail, Menu, X } from "lucide-react";
+import { EASE_OUT, motionConfig } from "./motion";
+import ScrollProgress from "./ScrollProgress";
 
 export default function Nav() {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(
+    () => window.scrollY > motionConfig.nav.scrollThreshold,
+  );
+
+  // Fade the blurred background in once the page leaves the very top.
+  const { scrollY } = useScroll();
+  useMotionValueEvent(scrollY, "change", (y) => {
+    setScrolled(y > motionConfig.nav.scrollThreshold);
+  });
 
   const identity = content.identity;
 
@@ -46,7 +58,14 @@ export default function Nav() {
   );
 
   return (
-    <header className="sticky top-0 z-50 border-b border-line bg-bg backdrop-blur-md">
+    <motion.header
+      initial={{ opacity: 0, y: -12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: motionConfig.nav.introDuration, ease: EASE_OUT }}
+      className={`sticky top-0 z-50 border-b transition-[background-color,border-color,backdrop-filter] duration-300 ${
+        scrolled || open ? "nav-scrolled" : "border-transparent bg-transparent"
+      }`}
+    >
       <nav
         className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4"
         aria-label="Primary"
@@ -90,24 +109,36 @@ export default function Nav() {
       </nav>
 
       {/* Mobile drop-down panel */}
-      {open && (
-        <div id="mobile-menu" className="border-t border-line bg-bg md:hidden">
-          <ul className="mx-auto max-w-5xl space-y-1 px-6 py-4">
-            {content.nav.map((link) => (
-              <li key={link.href}>
-                <a
-                  href={link.href}
-                  onClick={() => setOpen(false)}
-                  className="block rounded-md px-2 py-2 text-sm text-muted transition-colors hover:bg-surface hover:text-ink"
-                >
-                  {link.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-          <div className="mx-auto max-w-5xl px-6 pb-5">{socialLinks}</div>
-        </div>
-      )}
-    </header>
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            id="mobile-menu"
+            key="mobile-menu"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: motionConfig.nav.menuDuration, ease: EASE_OUT }}
+            className="overflow-hidden border-t border-line md:hidden"
+          >
+            <ul className="mx-auto max-w-5xl space-y-1 px-6 py-4">
+              {content.nav.map((link) => (
+                <li key={link.href}>
+                  <a
+                    href={link.href}
+                    onClick={() => setOpen(false)}
+                    className="block rounded-md px-2 py-2 text-sm text-muted transition-colors hover:bg-surface hover:text-ink"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <div className="mx-auto max-w-5xl px-6 pb-5">{socialLinks}</div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <ScrollProgress />
+    </motion.header>
   );
 }

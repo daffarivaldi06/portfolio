@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "motion/react";
+import { EASE_OUT, motionConfig } from "./motion";
 
 /** A sparse decorative system map. Only the two pulse dots animate. */
 export default function LivingSystemLines() {
@@ -14,6 +15,20 @@ export default function LivingSystemLines() {
 
   const showPulses = !reduceMotion && visible;
 
+  // Intro: each line draws itself in, one shortly after another.
+  const draw = (index: number) =>
+    reduceMotion
+      ? {}
+      : {
+          initial: { pathLength: 0 },
+          animate: { pathLength: 1 },
+          transition: {
+            duration: motionConfig.hero.linesDuration,
+            delay: motionConfig.hero.linesDelay + index * 0.15,
+            ease: EASE_OUT,
+          },
+        };
+
   return (
     <div aria-hidden="true" className="living-system-lines">
       <motion.svg
@@ -27,12 +42,12 @@ export default function LivingSystemLines() {
         transition={{ duration: reduceMotion ? 0 : 0.55, delay: reduceMotion ? 0 : 0.38 }}
       >
       <g fill="none" stroke="var(--color-muted)" strokeWidth="0.8" opacity="0.24">
-        <path d="M20 230 H130 L210 155 H330 L410 220 H560" />
+        <motion.path d="M20 230 H130 L210 155 H330 L410 220 H560" {...draw(0)} />
         <g className="living-system-detail">
-          <path d="M130 230 L205 300 H340 L410 220" />
-          <path d="M210 155 L260 90 H375 L445 130 H535" />
-          <path d="M340 300 L455 335 H545" />
-          <path d="M410 220 L475 175 H555" />
+          <motion.path d="M130 230 L205 300 H340 L410 220" {...draw(1)} />
+          <motion.path d="M210 155 L260 90 H375 L445 130 H535" {...draw(2)} />
+          <motion.path d="M340 300 L455 335 H545" {...draw(3)} />
+          <motion.path d="M410 220 L475 175 H555" {...draw(4)} />
         </g>
       </g>
 

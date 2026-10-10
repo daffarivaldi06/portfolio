@@ -1,7 +1,12 @@
 import { content } from "../data/content";
 import { MapPin } from "lucide-react";
+import { motion } from "motion/react";
 import { Reveal } from "./Reveal";
 import { Section } from "./Section";
+import { EASE_OUT, motionConfig } from "./motion";
+
+const { timeline } = motionConfig;
+const inView = { once: true, margin: motionConfig.reveal.viewportMargin };
 
 export default function Experience() {
   const items = content.experience;
@@ -15,8 +20,26 @@ export default function Experience() {
             <li key={item.company} className="flex gap-5 sm:gap-7">
               {/* Timeline rail: node + connecting line */}
               <div className="flex flex-col items-center" aria-hidden>
-                <span className="mt-3 h-3 w-3 shrink-0 rounded-full bg-accent ring-4 ring-bg" />
-                {!isLast && <span className="my-1.5 w-px flex-1 bg-line" />}
+                <motion.span
+                  className="mt-3 h-3 w-3 shrink-0 rounded-full bg-accent ring-4 ring-bg"
+                  initial={{ scale: 0, opacity: 0 }}
+                  whileInView={{ scale: 1, opacity: 1 }}
+                  viewport={inView}
+                  transition={{ duration: timeline.dotDuration, ease: EASE_OUT }}
+                />
+                {!isLast && (
+                  <motion.span
+                    className="my-1.5 w-px flex-1 origin-top bg-line"
+                    initial={{ scaleY: 0 }}
+                    whileInView={{ scaleY: 1 }}
+                    viewport={inView}
+                    transition={{
+                      duration: timeline.railDuration,
+                      delay: timeline.dotDuration * 0.5,
+                      ease: EASE_OUT,
+                    }}
+                  />
+                )}
               </div>
 
               {/* Content */}

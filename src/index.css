@@ -27,6 +27,29 @@
 
 html {
   scroll-behavior: smooth;
+  /* Elements sliding in from the side must never create horizontal scroll.
+     Set on <html> only: overflow on <body> would break the sticky navbar. */
+  overflow-x: hidden;
+}
+
+@supports (overflow-x: clip) {
+  html {
+    overflow-x: clip;
+  }
+}
+
+/* Navbar background once the page is scrolled: translucent + blurred. */
+.nav-scrolled {
+  background-color: var(--color-bg);
+  border-color: var(--color-line);
+}
+
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .nav-scrolled {
+    background-color: color-mix(in srgb, var(--color-bg) 72%, transparent);
+    -webkit-backdrop-filter: blur(12px) saturate(140%);
+    backdrop-filter: blur(12px) saturate(140%);
+  }
 }
 
 body {
@@ -46,11 +69,41 @@ body {
   border-radius: 2px;
 }
 
-/* Static warmth behind the hero; the SVG supplies the only continuous motion. */
+/* Warmth behind the hero. */
 .hero-glow {
   background:
     radial-gradient(60% 50% at 30% 20%, var(--hero-glow), transparent 70%),
     radial-gradient(50% 40% at 80% 60%, var(--hero-glow), transparent 70%);
+}
+
+/* Very slow drift of the glow (transform only, GPU-cheap).
+   Tune speed with the duration below; tune travel in the keyframes. */
+.hero-glow-drift {
+  animation: hero-drift 24s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@keyframes hero-drift {
+  0% {
+    transform: translate3d(-3%, -2%, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(3%, 2%, 0) scale(1.06);
+  }
+  100% {
+    transform: translate3d(-1%, 3%, 0) scale(1.02);
+  }
+}
+
+/* Faint static grid, faded out toward the edges so text stays clean. */
+.hero-grid {
+  background-image:
+    linear-gradient(to right, var(--color-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-line) 1px, transparent 1px);
+  background-size: 56px 56px;
+  background-position: center top;
+  -webkit-mask-image: radial-gradient(ellipse 75% 65% at 60% 30%, black 10%, transparent 75%);
+  mask-image: radial-gradient(ellipse 75% 65% at 60% 30%, black 10%, transparent 75%);
 }
 
 .living-system-lines {
@@ -77,6 +130,16 @@ body {
   .living-system-detail {
     display: none;
   }
+
+  /* Phones: keep the glow static and the grid sparser. */
+  .hero-glow-drift {
+    animation: none;
+    will-change: auto;
+  }
+
+  .hero-grid {
+    background-size: 44px 44px;
+  }
 }
 
 /* Respect prefers-reduced-motion globally */
@@ -90,5 +153,10 @@ body {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .hero-glow-drift {
+    animation: none;
+    will-change: auto;
   }
 }

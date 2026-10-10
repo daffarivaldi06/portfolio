@@ -1,7 +1,7 @@
 import { Github, Linkedin, Mail } from "lucide-react";
 import { content } from "../data/content";
-import { Reveal } from "./Reveal";
 import { Section } from "./Section";
+import { Stagger, StaggerItem } from "./motion";
 
 export default function Contact() {
   const identity = content.identity;
@@ -31,16 +31,16 @@ export default function Contact() {
 
   return (
     <Section id="contact" kicker="04 · Contact" title="Get in touch">
-      <div className="grid gap-5 sm:grid-cols-3">
-        {links.map(({ label, href, value, Icon }, index) => {
+      <Stagger className="grid gap-5 sm:grid-cols-3" delay={0.05}>
+        {links.map(({ label, href, value, Icon }) => {
           const external = !href.startsWith("mailto:");
           return (
-            <Reveal key={label} delay={0.05 * (index + 1)} className="h-full">
+            <StaggerItem key={label} className="h-full">
               <a
                 href={href}
                 target={external ? "_blank" : undefined}
                 rel={external ? "noreferrer" : undefined}
-                className="group flex h-full flex-col rounded-lg border border-line bg-surface p-6 transition-colors hover:border-accent"
+                className="group flex h-full flex-col rounded-lg border border-line bg-surface p-6 transition-[border-color,transform] duration-300 hover:-translate-y-1 hover:border-accent"
               >
                 <Icon
                   size={20}
@@ -54,10 +54,10 @@ export default function Contact() {
                   {value}
                 </span>
               </a>
-            </Reveal>
+            </StaggerItem>
           );
         })}
-      </div>
+      </Stagger>
     </Section>
   );
 }
