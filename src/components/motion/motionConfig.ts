@@ -62,6 +62,31 @@ export const motionConfig = {
     linesDuration: 1.6,
   },
 
+  /**
+   * 3D system network in the hero (desktop pointers only; phones, tablets
+   * and reduced-motion get the SVG). Angles in radians, speeds per second.
+   */
+  hero3d: {
+    /** Device pixel ratio cap — the main GPU cost lever. */
+    maxDpr: 1.5,
+    /** Slow sway around the vertical axis: amplitude and angular speed. */
+    swayAmplitude: 0.32,
+    swaySpeed: 0.05,
+    /** How far the network leans toward the cursor. 0 disables parallax. */
+    parallaxTilt: 0.1,
+    parallaxShift: 0.12,
+    /** Higher = parallax catches up with the cursor faster. */
+    parallaxDamping: 2.2,
+    lineOpacity: 0.32,
+    nodeOpacity: 0.55,
+    /** Node / pulse diameter in CSS px. */
+    nodeSize: 4.5,
+    pulseSize: 5.5,
+    pulseOpacity: 0.5,
+    /** Crossfade from the SVG once the SVG's own line drawing has finished. */
+    crossfadeDuration: 0.9,
+  },
+
   /** Project cards (TiltCard). Tilt + glow run on desktop pointers only. */
   tilt: {
     /** Maximum rotation toward the cursor, in degrees. 0 disables tilt. */

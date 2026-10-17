@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import { Reveal } from "./Reveal";
-import LivingSystemLines from "./LivingSystemLines";
+import HeroNetwork from "./HeroNetwork";
 import { EASE_OUT, TextReveal, motionConfig, useCanHover } from "./motion";
 
 const hero = motionConfig.hero;
@@ -35,7 +35,7 @@ export default function Hero() {
         animate={{ opacity: 1 }}
         transition={{ duration: hero.gridDuration, ease: EASE_OUT }}
       />
-      <LivingSystemLines />
+      <HeroNetwork />
 
       <div className="relative z-10 mx-auto max-w-3xl px-6 pb-24 pt-24 sm:pt-32">
         <Reveal delay={hero.metaDelay} y={12}>
