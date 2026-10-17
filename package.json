@@ -6,7 +6,7 @@
   "homepage": "https://daffarivaldi06.github.io/portfolio/",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && cross-env TEMP=node_modules/.tmp TMP=node_modules/.tmp vite build",
     "typecheck": "tsc -b",
     "preview": "vite preview",
     "predeploy": "npm run build",
@@ -26,6 +26,7 @@
     "@types/three": "^0.170.0",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
+    "cross-env": "^7.0.3",
     "gh-pages": "^6.3.0",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",
