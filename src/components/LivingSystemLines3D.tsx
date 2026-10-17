@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type MutableRefObject, type RefObject } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { PointMaterial } from "@react-three/drei";
 import * as THREE from "three";
 import { motionConfig } from "./motion";
 
@@ -71,6 +70,21 @@ function pointOnRoute({ points, cumulative, length }: Route, progress: number, o
   while (i < cumulative.length - 1 && cumulative[i] < distance) i++;
   const span = cumulative[i] - cumulative[i - 1];
   return out.lerpVectors(points[i - 1], points[i], span > 0 ? (distance - cumulative[i - 1]) / span : 0);
+}
+
+/** White anti-aliased disc: turns square GL points into round dots; the material colour tints it. */
+function createDotTexture() {
+  const size = 64;
+  const canvas = document.createElement("canvas");
+  canvas.width = canvas.height = size;
+  const context = canvas.getContext("2d");
+  if (context) {
+    context.fillStyle = "#fff";
+    context.beginPath();
+    context.arc(size / 2, size / 2, size / 2 - 1, 0, Math.PI * 2);
+    context.fill();
+  }
+  return new THREE.CanvasTexture(canvas);
 }
 
 function readAccent() {
@@ -172,6 +186,8 @@ function Network({ color, pointer, onReady }: NetworkProps) {
   }, []);
 
   const scratch = useMemo(() => new THREE.Vector3(), []);
+  const dot = useMemo(createDotTexture, []);
+  useEffect(() => () => dot.dispose(), [dot]);
 
   useFrame((_, rawDelta) => {
     if (!announced.current) {
@@ -231,7 +247,8 @@ function Network({ color, pointer, onReady }: NetworkProps) {
           <bufferGeometry>
             <bufferAttribute attach="attributes-position" args={[nodePositions, 3]} />
           </bufferGeometry>
-          <PointMaterial
+          <pointsMaterial
+            map={dot}
             color={color}
             size={cfg.nodeSize}
             sizeAttenuation={false}
@@ -246,7 +263,8 @@ function Network({ color, pointer, onReady }: NetworkProps) {
             <bufferAttribute attach="attributes-position" args={[pulsePositions, 3]} />
             <bufferAttribute attach="attributes-color" args={[pulseColors, 4]} />
           </bufferGeometry>
-          <PointMaterial
+          <pointsMaterial
+            map={dot}
             color={color}
             vertexColors
             size={cfg.pulseSize}
